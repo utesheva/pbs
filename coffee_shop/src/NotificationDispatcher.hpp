@@ -1,29 +1,27 @@
 #pragma once
-#include <functional>
-#include <thread>
-#include <mutex>
 #include <condition_variable>
+#include <functional>
+#include <mutex>
 #include <queue>
+#include <thread>
 
 class NotificationDispatcher {
-public:
-    static NotificationDispatcher& instance();
+ public:
+  static NotificationDispatcher& instance();
 
-    // Post a task to be executed asynchronously by dispatcher thread.
-    void post(std::function<void()> task);
+  void post(std::function<void()> task);
 
-    // Stop the dispatcher (called in destructor)
-    void stop();
+  void stop();
 
-private:
-    NotificationDispatcher();
-    ~NotificationDispatcher();
+ private:
+  NotificationDispatcher();
+  ~NotificationDispatcher();
 
-    void run();
+  void run();
 
-    std::thread worker_;
-    std::mutex mtx_;
-    std::condition_variable cv_;
-    std::queue<std::function<void()>> tasks_;
-    bool running_ = true;
+  std::thread worker_;
+  std::mutex mtx_;
+  std::condition_variable cv_;
+  std::queue<std::function<void()>> tasks_;
+  bool running_ = true;
 };

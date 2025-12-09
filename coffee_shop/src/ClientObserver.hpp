@@ -9,7 +9,7 @@
 class ClientObserver : public IObserver,
                        public std::enable_shared_from_this<ClientObserver> {
  public:
-  ClientObserver(int orderId);
+  explicit ClientObserver(int orderId);
 
   void update(const Order& order) override;
 

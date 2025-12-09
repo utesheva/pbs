@@ -25,15 +25,17 @@ FetchContent_MakeAvailable(httplib)
 
 # Source lists to avoid duplication
 set(SRC_COMMON
+    src/ClientObserver.cpp
+    src/CoffeeShop.cpp
     src/DrinkFactory.cpp
     src/Drinks.cpp
-    src/PaymentStrategy.cpp
-    src/PaymentFactory.cpp
-    src/Order.cpp
-    src/OrderManager.cpp
-    src/CoffeeShop.cpp
     src/Logger.cpp
     src/NotificationDispatcher.cpp
+    src/Observer.hpp
+    src/Order.cpp
+    src/OrderManager.cpp
+    src/PaymentStrategy.cpp
+    src/PaymentFactory.cpp
 )
 
 # Main demo executable (CLI)
@@ -53,6 +55,7 @@ target_include_directories(coffee-server PRIVATE src ${httplib_SOURCE_DIR} ${nlo
 
 # Client application (CLI) to talk to the HTTP server
 add_executable(client-app
+    src/ClientObserver.cpp
     src/ClientApp.cpp
 )
 target_include_directories(client-app PRIVATE src ${httplib_SOURCE_DIR} ${nlohmann_json_SOURCE_DIR}/include)

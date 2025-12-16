@@ -1,25 +1,25 @@
 #pragma once
-#include "Observer.hpp"
-#include "Order.hpp"
-
 #include <condition_variable>
 #include <mutex>
 #include <string>
 
-class ClientObserver: public IObserver,
-                      public std::enable_shared_from_this<ClientObserver> {
-public:
-    explicit ClientObserver(int orderId);
+#include "Observer.hpp"
+#include "Order.hpp"
 
-    void Update(const Order& order) override;
+class ClientObserver : public IObserver,
+                       public std::enable_shared_from_this<ClientObserver> {
+ public:
+  explicit ClientObserver(int orderId);
 
-    bool WaitForStatusChange(int timeout_ms);
+  void Update(const Order& order) override;
 
-    std::string LastStatus() const;
+  bool WaitForStatusChange(int timeout_ms);
 
-private:
-    int orderId_;
-    mutable std::mutex mtx_;
-    std::condition_variable cv_;
-    std::string lastStatus_;
+  std::string LastStatus() const;
+
+ private:
+  int orderId_;
+  mutable std::mutex mtx_;
+  std::condition_variable cv_;
+  std::string lastStatus_;
 };

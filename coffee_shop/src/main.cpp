@@ -1,3 +1,7 @@
+#include <iostream>
+#include <memory>
+#include <thread>
+
 #include "ClientObserver.hpp"
 #include "CoffeeShop.hpp"
 #include "DrinkFactory.hpp"
@@ -6,50 +10,46 @@
 #include "OrderManager.hpp"
 #include "PaymentStrategy.hpp"
 
-#include <iostream>
-#include <memory>
-#include <thread>
-
 int main() {
-    CoffeeShop shop;
-    shop.Start(3); // 3 baristas
+  CoffeeShop shop;
+  shop.Start(3);  // 3 baristas
 
-    auto logger = std::make_shared<LoggerObserver>("coffee.log");
-    OrderManager manager(shop, logger);
+  auto logger = std::make_shared<LoggerObserver>("coffee.log");
+  OrderManager manager(shop, logger);
 
-    std::cout << "Available drinks:\n";
-    for (auto& d : DrinkFactory::ListAvailable()) {
-        std::cout << " - " << d << "\n";
-    }
+  std::cout << "Available drinks:\n";
+  for (auto& d : DrinkFactory::ListAvailable()) {
+    std::cout << " - " << d << "\n";
+  }
 
-    // Симуляция клиента: создаём заказ через OrderManager, подписываемся
-    // клиентским observer'ом
-    auto clientObs = std::make_shared<ClientObserver>(
-        0); // orderId можно обновить при получении, для simplicity ignore
-    auto order = manager.CreateOrder("Espresso", "CreditCard");
-    order->Attach(clientObs);
+  // Симуляция клиента: создаём заказ через OrderManager, подписываемся
+  // клиентским observer'ом
+  auto clientObs = std::make_shared<ClientObserver>(
+      0);  // orderId можно обновить при получении, для simplicity ignore
+  auto order = manager.CreateOrder("Espresso", "CreditCard");
+  order->Attach(clientObs);
 
-    std::cout << "Created order id=" << order->Id()
-              << " drink=" << order->DrinkName() << "\n";
+  std::cout << "Created order id=" << order->Id()
+            << " drink=" << order->DrinkName() << "\n";
 
-    // Подождём, пока статус изменится (например, до Completed)
-    bool notified = clientObs->WaitForStatusChange(10000); // timeout 10s
-    if (notified) {
-        std::cout << "Client observer noticed status: " << clientObs->LastStatus()
-                  << "\n";
-    } else {
-        std::cout << "Timeout waiting for status change\n";
-    }
+  // Подождём, пока статус изменится (например, до Completed)
+  bool notified = clientObs->WaitForStatusChange(10000);  // timeout 10s
+  if (notified) {
+    std::cout << "Client observer noticed status: " << clientObs->LastStatus()
+              << "\n";
+  } else {
+    std::cout << "Timeout waiting for status change\n";
+  }
 
-    // Оплатим (демонстрация)
-    {
-        auto [ok, receipt] = manager.PayOrder(order->id());
-        std::cout << "Payment result: " << ok << ", receipt: " << receipt << "\n";
-    }
+  // Оплатим (демонстрация)
+  {
+    auto [ok, receipt] = manager.PayOrder(order->Id());
+    std::cout << "Payment result: " << ok << ", receipt: " << receipt << "\n";
+  }
 
-    // Дождёмся обработки (несколько секунд)
-    std::this_thread::sleep_for(std::chrono::seconds(6));
+  // Дождёмся обработки (несколько секунд)
+  std::this_thread::sleep_for(std::chrono::seconds(6));
 
-    shop.Stop();
-    return 0;
+  shop.Stop();
+  return 0;
 }

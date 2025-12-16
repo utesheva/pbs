@@ -7,17 +7,17 @@
 
 class NotificationDispatcher {
 public:
-    static NotificationDispatcher& instance();
+    static NotificationDispatcher& Instance();
 
-    void post(std::function<void()> task);
+    void Post(std::function<void()> task);
 
-    void stop();
+    void Stop();
 
 private:
     NotificationDispatcher();
     ~NotificationDispatcher();
 
-    void run();
+    void Run();
 
     std::thread worker_;
     std::mutex mtx_;

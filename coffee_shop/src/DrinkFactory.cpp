@@ -1,11 +1,11 @@
 #include "DrinkFactory.hpp"
+#include "Drinks.hpp"
 
 #include <algorithm>
 #include <stdexcept>
 
-#include "Drinks.hpp"
 
-std::unique_ptr<Drink> DrinkFactory::create(const std::string& drinkType) {
+std::unique_ptr<Drink> DrinkFactory::Create(const std::string& drinkType) {
     std::string t = drinkType;
     std::transform(t.begin(), t.end(), t.begin(), ::tolower);
     if (t == "espresso") {
@@ -18,6 +18,6 @@ std::unique_ptr<Drink> DrinkFactory::create(const std::string& drinkType) {
     throw std::invalid_argument("Unknown drink type: " + drinkType);
 }
 
-std::vector<std::string> DrinkFactory::listAvailable() {
+std::vector<std::string> DrinkFactory::ListAvailable() {
     return {"Espresso", "Latte", "Tea"};
 }

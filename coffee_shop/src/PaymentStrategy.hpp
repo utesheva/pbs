@@ -7,9 +7,9 @@ class Order;
 class PaymentStrategy {
 public:
     virtual ~PaymentStrategy() = default;
-    virtual bool pay(const Order& order, std::string& out_receipt) = 0;
-    virtual std::string name() const = 0;
+    virtual bool Pay(const Order& order, std::string& out_receipt) = 0;
+    virtual std::string Name() const = 0;
 };
 
-std::unique_ptr<PaymentStrategy> makeCashPayment();
-std::unique_ptr<PaymentStrategy> makeCreditCardPayment();
+std::unique_ptr<PaymentStrategy> MakeCashPayment();
+std::unique_ptr<PaymentStrategy> MakeCreditCardPayment();

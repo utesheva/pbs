@@ -1,7 +1,8 @@
 #include "NotificationDispatcher.hpp"
+
 #include <utility>
 
-NotificationDispatcher& NotificationDispatcher::instance() {
+NotificationDispatcher& NotificationDispatcher::Instance() {
     static NotificationDispatcher inst;
     return inst;
 }
@@ -11,10 +12,10 @@ NotificationDispatcher::NotificationDispatcher() {
 }
 
 NotificationDispatcher::~NotificationDispatcher() {
-    stop();
+    Stop();
 }
 
-void NotificationDispatcher::stop() {
+void NotificationDispatcher::Stop() {
     {
         std::lock_guard<std::mutex> lk(mtx_);
         if (!running_) {
@@ -28,7 +29,7 @@ void NotificationDispatcher::stop() {
     }
 }
 
-void NotificationDispatcher::post(std::function<void()> task) {
+void NotificationDispatcher::Post(std::function<void()> task) {
     {
         std::lock_guard<std::mutex> lk(mtx_);
         tasks_.push(std::move(task));
@@ -36,7 +37,7 @@ void NotificationDispatcher::post(std::function<void()> task) {
     cv_.notify_one();
 }
 
-void NotificationDispatcher::run() {
+void NotificationDispatcher::Run() {
     while (true) {
         std::function<void()> task;
         {

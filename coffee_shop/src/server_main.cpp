@@ -10,10 +10,10 @@
 
 int main() {
     // Start dispatcher early
-    auto& disp = NotificationDispatcher::instance();
+    auto& disp = NotificationDispatcher::Instance();
 
     auto shop = std::make_shared<CoffeeShop>();
-    shop->start(3);
+    shop->Start(3);
 
     auto logger = std::make_shared<LoggerObserver>("coffee.log");
     auto manager = std::make_shared<OrderManager>(*shop, logger);
@@ -25,7 +25,7 @@ int main() {
     server.run("0.0.0.0", 8080);
 
     // On exit:
-    shop->stop();
-    disp.stop();
+    shop->Stop();
+    disp.Stop();
     return 0;
 }

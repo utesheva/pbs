@@ -11,7 +11,7 @@ public:
         out_receipt = "Paid with cash";
         return true;
     }
-    std::string name() const override {
+    std::string Name() const override {
         return "Cash";
     }
 };
@@ -22,14 +22,14 @@ public:
         out_receipt = "Paid with credit card (simulated)";
         return true;
     }
-    std::string name() const override {
+    std::string Name() const override {
         return "CreditCard";
     }
 };
 
-std::unique_ptr<PaymentStrategy> makeCashPayment() {
+std::unique_ptr<PaymentStrategy> MakeCashPayment() {
     return std::make_unique<CashPayment>();
 }
-std::unique_ptr<PaymentStrategy> makeCreditCardPayment() {
+std::unique_ptr<PaymentStrategy> MakeCreditCardPayment() {
     return std::make_unique<CreditCardPayment>();
 }

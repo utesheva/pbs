@@ -1,4 +1,7 @@
 #pragma once
+
+#include "Order.hpp"
+
 #include <condition_variable>
 #include <deque>
 #include <memory>
@@ -6,21 +9,19 @@
 #include <thread>
 #include <vector>
 
-#include "Order.hpp"
-
 class CoffeeShop {
 public:
     CoffeeShop();
     ~CoffeeShop();
 
-    void start(size_t num_baristas);
-    void stop();
+    void Start(size_t num_baristas);
+    void Stop();
 
-    void submitOrder(std::shared_ptr<Order> order);
-    bool cancelOrder(int orderId);
+    void SubmitOrder(std::shared_ptr<Order> order);
+    bool CancelOrder(int orderId);
 
 private:
-    void baristaLoop(int idx);
+    void BaristaLoop(int idx);
 
     std::deque<std::shared_ptr<Order>> queue_;
     std::mutex queue_mtx_;

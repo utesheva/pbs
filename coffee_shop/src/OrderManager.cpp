@@ -11,17 +11,17 @@ OrderManager::OrderManager(CoffeeShop& shop,
 
 OrderManager::~OrderManager() = default;
 
-std::shared_ptr<Order> OrderManager::createOrder(
+std::shared_ptr<Order> OrderManager::CreateOrder(
     const std::string& drinkType, const std::string& paymentType) {
     int id = nextId_.fetch_add(1);
-    auto drink = DrinkFactory::create(drinkType);
-    auto payment = PaymentFactory::create(paymentType);
+    auto drink = DrinkFactory::Create(drinkType);
+    auto payment = PaymentFactory::Create(paymentType);
 
     auto order =
         std::make_shared<Order>(id, std::move(drink), std::move(payment));
 
     if (logger_) {
-        order->attach(logger_);
+        order->Attach(logger_);
     }
 
     {
@@ -29,13 +29,13 @@ std::shared_ptr<Order> OrderManager::createOrder(
         orders_[id] = order;
     }
 
-    order->setStatus(Order::Status::Placed);
+    order->SetStatus(Order::StatusType::Placed);
 
-    shop_.submitOrder(order);
+    shop_.SubmitOrder(order);
     return order;
 }
 
-std::shared_ptr<Order> OrderManager::getOrder(int id) {
+std::shared_ptr<Order> OrderManager::GetOrder(int id) {
     std::lock_guard<std::mutex> lk(mtx_);
     auto it = orders_.find(id);
     if (it != orders_.end()) {
@@ -44,12 +44,12 @@ std::shared_ptr<Order> OrderManager::getOrder(int id) {
     return nullptr;
 }
 
-std::pair<bool, std::string> OrderManager::payOrder(int id) {
-    auto o = getOrder(id);
+std::pair<bool, std::string> OrderManager::PayOrder(int id) {
+    auto o = GetOrder(id);
     if (!o) {
         return {false, "Order not found"};
     }
     std::string receipt;
-    bool ok = o->pay(receipt);
+    bool ok = o->Pay(receipt);
     return {ok, receipt};
 }

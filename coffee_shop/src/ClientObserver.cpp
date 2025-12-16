@@ -1,8 +1,8 @@
-#include <mutex>
-
 #include "ClientObserver.hpp"
 #include "Observer.hpp"
 #include "Order.hpp"
+
+#include <mutex>
 
 class LoggerObserver;
 
@@ -10,13 +10,13 @@ ClientObserver::ClientObserver(int orderId)
     : orderId_(orderId) {
 }
 
-void ClientObserver::update(const Order& order) {
+void ClientObserver::Update(const Order& order) {
     std::lock_guard<std::mutex> lk(mtx_);
-    lastStatus_ = order.statusString();
+    lastStatus_ = order.StatusString();
     cv_.notify_all();
 }
 
-bool ClientObserver::waitForStatusChange(int timeout_ms = 100) {
+bool ClientObserver::WaitForStatusChange(int timeout_ms = 100) {
     std::unique_lock<std::mutex> lk(mtx_);
     if (timeout_ms == 0) {
         cv_.wait(lk);
@@ -27,7 +27,7 @@ bool ClientObserver::waitForStatusChange(int timeout_ms = 100) {
     }
 }
 
-std::string ClientObserver::lastStatus() const {
+std::string ClientObserver::LastStatus() const {
     std::lock_guard<std::mutex> lk(mtx_);
     return lastStatus_;
 }

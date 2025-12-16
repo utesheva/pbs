@@ -1,10 +1,9 @@
 #include "Logger.hpp"
+#include "Order.hpp"
 
 #include <chrono>
 #include <ctime>
 #include <iostream>
-
-#include "Order.hpp"
 
 LoggerObserver::LoggerObserver(const std::string& file) {
     ofs_.open(file, std::ios::app);
@@ -16,7 +15,7 @@ LoggerObserver::~LoggerObserver() {
     }
 }
 
-void LoggerObserver::update(const Order& order) {
+void LoggerObserver::Update(const Order& order) {
     std::lock_guard<std::mutex> lk(mtx_);
     auto now = std::chrono::system_clock::now();
     std::time_t t = std::chrono::system_clock::to_time_t(now);
@@ -25,7 +24,7 @@ void LoggerObserver::update(const Order& order) {
         line.pop_back();
     }
     std::string msg = line + " - Order " + std::to_string(order.id()) +
-                      " status: " + order.statusString();
+                      " status: " + order.StatusString();
     std::cout << msg << std::endl;
     if (ofs_.is_open()) {
         ofs_ << msg << std::endl;

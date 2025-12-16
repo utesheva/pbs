@@ -6,17 +6,17 @@
 CoffeeShop::CoffeeShop() = default;
 
 CoffeeShop::~CoffeeShop() {
-    stop();
+    Stop();
 }
 
-void CoffeeShop::start(size_t num_baristas) {
+void CoffeeShop::Start(size_t num_baristas) {
     shutdown_ = false;
     for (size_t i = 0; i < num_baristas; ++i) {
-        baristas_.emplace_back([this, i]() { baristaLoop(static_cast<int>(i)); });
+        baristas_.emplace_back([this, i]() { BaristaLoop(static_cast<int>(i)); });
     }
 }
 
-void CoffeeShop::stop() {
+void CoffeeShop::Stop() {
     {
         std::lock_guard<std::mutex> lk(queue_mtx_);
         shutdown_ = true;
@@ -30,7 +30,7 @@ void CoffeeShop::stop() {
     baristas_.clear();
 }
 
-void CoffeeShop::submitOrder(std::shared_ptr<Order> order) {
+void CoffeeShop::SubmitOrder(std::shared_ptr<Order> order) {
     {
         std::lock_guard<std::mutex> lk(queue_mtx_);
         queue_.push_back(order);
@@ -38,20 +38,20 @@ void CoffeeShop::submitOrder(std::shared_ptr<Order> order) {
     cv_.notify_one();
 }
 
-bool CoffeeShop::cancelOrder(int orderId) {
+bool CoffeeShop::CancelOrder(int orderId) {
     std::lock_guard<std::mutex> lk(queue_mtx_);
     for (auto it = queue_.begin(); it != queue_.end(); ++it) {
         if ((*it)->id() == orderId) {
             auto order = *it;
             queue_.erase(it);
-            order->setStatus(Order::Status::Cancelled);
+            order->SetStatus(Order::StatusType::Cancelled);
             return true;
         }
     }
     return false;
 }
 
-void CoffeeShop::baristaLoop(int idx) {
+void CoffeeShop::BaristaLoop(int idx) {
     while (true) {
         std::shared_ptr<Order> order;
         {
@@ -68,24 +68,24 @@ void CoffeeShop::baristaLoop(int idx) {
             }
         }
 
-        if (order->status() == Order::Status::Cancelled) {
+        if (order->Status() == Order::StatusType::Cancelled) {
             continue;
         }
 
-        if (order->status() == Order::Status::Placed) {
-            order->setStatus(Order::Status::Preparing);
-            int total = order->prepareTime();
+        if (order->Status() == Order::StatusType::Placed) {
+            order->SetStatus(Order::StatusType::Preparing);
+            int total = order->PrepareTime();
             for (int s = 0; s < total; ++s) {
                 std::this_thread::sleep_for(std::chrono::seconds(1));
-                if (order->status() == Order::Status::Cancelled) {
+                if (order->Status() == Order::StatusType::Cancelled) {
                     break;
                 }
             }
-            if (order->status() == Order::Status::Cancelled) {
+            if (order->Status() == Order::StatusType::Cancelled) {
                 continue;
             }
-            order->setStatus(Order::Status::Ready);
-            order->setStatus(Order::Status::Completed);
+            order->SetStatus(Order::StatusType::Ready);
+            order->SetStatus(Order::StatusType::Completed);
         } else {
             continue;
         }

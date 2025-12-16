@@ -1,11 +1,12 @@
 #pragma once
+#include "CoffeeShop.hpp"
+#include "Observer.hpp"
+#include "Order.hpp"
+
 #include <atomic>
 #include <memory>
 #include <mutex>
 #include <unordered_map>
-#include "CoffeeShop.hpp"
-#include "Observer.hpp"
-#include "Order.hpp"
 
 class LoggerObserver;
 
@@ -14,12 +15,12 @@ public:
     OrderManager(CoffeeShop& shop, std::shared_ptr<LoggerObserver> logger);
     ~OrderManager();
 
-    std::shared_ptr<Order> createOrder(const std::string& drinkType,
+    std::shared_ptr<Order> CreateOrder(const std::string& drinkType,
                                        const std::string& paymentType);
 
-    std::shared_ptr<Order> getOrder(int id);
+    std::shared_ptr<Order> GetOrder(int id);
 
-    std::pair<bool, std::string> payOrder(int id);
+    std::pair<bool, std::string> PayOrder(int id);
 
 private:
     CoffeeShop& shop_;

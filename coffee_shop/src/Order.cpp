@@ -1,74 +1,75 @@
 #include "Order.hpp"
-#include <algorithm>
 #include "NotificationDispatcher.hpp"
 #include "PaymentStrategy.hpp"
+
+#include <algorithm>
 
 Order::Order(int id, std::unique_ptr<Drink> drink,
              std::unique_ptr<PaymentStrategy> payment)
     : id_(id)
     , drink_(std::move(drink))
     , payment_(std::move(payment))
-    , status_(Status::Placed) {
+    , status_(StatusType::Placed) {
 }
 
-int Order::id() const {
+int Order::Id() const {
     return id_;
 }
-std::string Order::drinkName() const {
-    return drink_->name();
+std::string Order::DrinkName() const {
+    return drink_->Name();
 }
-int Order::prepareTime() const {
-    return drink_->prepareTimeSeconds();
+int Order::PrepareTime() const {
+    return drink_->PrepareTimeSeconds();
 }
 
-Order::Status Order::status() const {
+Order::Status Order::Status() const {
     std::lock_guard<std::mutex> lk(mtx_);
     return status_;
 }
 
-std::string Order::statusString() const {
-    switch (status()) {
-        case Status::Placed:
+std::string Order::StatusString() const {
+    switch (Status()) {
+        case StatusType::Placed:
             return "Placed";
-        case Status::Preparing:
+        case StatusType::Preparing:
             return "Preparing";
-        case Status::Ready:
+        case StatusType::Ready:
             return "Ready";
-        case Status::Completed:
+        case StatusType::Completed:
             return "Completed";
-        case Status::Paid:
+        case StatusType::Paid:
             return "Paid";
-        case Status::Cancelled:
+        case StatusType::Cancelled:
             return "Cancelled";
     }
     return "Unknown";
 }
 
-void Order::setStatus(Status s) {
+void Order::SetStatus(Status s) {
     {
         std::lock_guard<std::mutex> lk(mtx_);
         status_ = s;
     }
-    notify();
+    Notify();
 }
 
-bool Order::pay(std::string& receipt) {
+bool Order::Pay(std::string& receipt) {
     if (!payment_) {
         return false;
     }
-    bool ok = payment_->pay(*this, receipt);
+    bool ok = payment_->Pay(*this, receipt);
     if (ok) {
-        setStatus(Status::Paid);
+        SetStatus(StatusType::Paid);
     }
     return ok;
 }
 
-void Order::attach(std::shared_ptr<IObserver> obs) {
+void Order::Attach(std::shared_ptr<IObserver> obs) {
     std::lock_guard<std::mutex> lk(mtx_);
     observers_.push_back(obs);
 }
 
-void Order::detach(std::shared_ptr<IObserver> obs) {
+void Order::Detach(std::shared_ptr<IObserver> obs) {
     std::lock_guard<std::mutex> lk(mtx_);
     observers_.erase(std::remove_if(observers_.begin(), observers_.end(),
                                     [&](const std::weak_ptr<IObserver>& w) {
@@ -78,7 +79,7 @@ void Order::detach(std::shared_ptr<IObserver> obs) {
                      observers_.end());
 }
 
-void Order::notify() const {
+void Order::Notify() const {
     std::vector<std::shared_ptr<IObserver>> listeners;
     {
         std::lock_guard<std::mutex> lk(mtx_);
@@ -91,9 +92,9 @@ void Order::notify() const {
     auto self = const_cast<Order*>(this)->shared_from_this();
     for (auto& l : listeners) {
         auto observer = l;
-        NotificationDispatcher::instance().post([observer, self]() {
+        NotificationDispatcher::Instance().Post([observer, self]() {
             try {
-                observer->update(*self);
+                observer->Update(*self);
             } catch (...) {
                 // swallow to avoid crashing dispatcher
             }

@@ -5,6 +5,6 @@
 
 class PaymentFactory {
 public:
-    static std::unique_ptr<PaymentStrategy> create(
+    static std::unique_ptr<PaymentStrategy> Create(
         const std::string& paymentType);
 };

@@ -1,15 +1,15 @@
 #pragma once
+#include "Observer.hpp"
+
 #include <fstream>
 #include <mutex>
 #include <string>
-
-#include "Observer.hpp"
 
 class LoggerObserver: public IObserver {
 public:
     LoggerObserver(const std::string& file = "coffee.log");
     ~LoggerObserver();
-    void update(const Order& order) override;
+    void Update(const Order& order) override;
 
 private:
     std::mutex mtx_;

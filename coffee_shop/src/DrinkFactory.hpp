@@ -1,13 +1,13 @@
 #pragma once
+#include "Drinks.hpp"
+
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "Drinks.hpp"
-
 class DrinkFactory {
 public:
-    static std::unique_ptr<Drink> create(const std::string& drinkType);
+    static std::unique_ptr<Drink> Create(const std::string& drinkType);
 
-    static std::vector<std::string> listAvailable();
+    static std::vector<std::string> ListAvailable();
 };

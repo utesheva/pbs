@@ -35,7 +35,7 @@ fi
 ERRORS=0
 for file in $FILES; do
     echo "Checking:  $file"
-    clang-format --dry-run --Werror "$file" 2>&1
+    clang-format --dry-run --Werror --style=google "$file" 2>&1
     if [ $? -ne 0 ]; then
         echo "Style error in:  $file"
         ERRORS=$((ERRORS + 1))
@@ -44,10 +44,10 @@ done
 
 echo ""
 if [ $ERRORS -eq 0 ]; then
-    echo "✓ All files pass style check"
+    echo "All files pass style check"
     exit 0
 else
-    echo "✗ Found $ERRORS file(s) with style errors"
-    echo "Run 'clang-format -i <file>' to fix automatically"
+    echo "Found $ERRORS file(s) with style errors"
+    echo "Run 'clang-format -i --style=google <file>' to fix automatically"
     exit 1
 fi

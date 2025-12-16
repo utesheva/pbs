@@ -1,8 +1,9 @@
 #pragma once
-#include <memory>
 #include "CoffeeShop.hpp"
 #include "Logger.hpp"
 #include "OrderManager.hpp"
+
+#include <memory>
 
 class HttpServer {
 public:
@@ -10,7 +11,7 @@ public:
                std::shared_ptr<OrderManager> manager);
     ~HttpServer();
 
-    void run(const std::string& host = "0.0.0.0", int port = 8080);
+    void Run(const std::string& host = "0.0.0.0", int port = 8080);
 
 private:
     std::shared_ptr<CoffeeShop> shop_;

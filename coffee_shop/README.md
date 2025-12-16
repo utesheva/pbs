@@ -1,4 +1,4 @@
-##Сборка проекта:
+## Сборка проекта:
 ```
 cd coffee_shop
 mkdir build
@@ -7,15 +7,16 @@ cmake -DBUILD_TESTS=ON ..
 cmake --build .
 ```
 
-##Запуск тестов:
+## Запуск тестов:
 ```
 cd build
 ctest --output-on-failure
 # или напрямую
-./coffee-shop-tests
+cd build
+./tests/coffee-shop-tests 
 ```
 
-##Проверка стиля:
+## Проверка стиля (из ```pbs/coffee_shop```):
 ```
 bash check_style.sh
 ```

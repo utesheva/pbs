@@ -6,8 +6,8 @@
 #include "Drinks.hpp"
 
 class DrinkFactory {
- public:
-  static std::unique_ptr<Drink> create(const std::string& drinkType);
+public:
+    static std::unique_ptr<Drink> create(const std::string& drinkType);
 
-  static std::vector<std::string> listAvailable();
+    static std::vector<std::string> listAvailable();
 };

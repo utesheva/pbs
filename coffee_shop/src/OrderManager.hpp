@@ -10,21 +10,21 @@
 class LoggerObserver;
 
 class OrderManager {
- public:
-  OrderManager(CoffeeShop& shop, std::shared_ptr<LoggerObserver> logger);
-  ~OrderManager();
+public:
+    OrderManager(CoffeeShop& shop, std::shared_ptr<LoggerObserver> logger);
+    ~OrderManager();
 
-  std::shared_ptr<Order> createOrder(const std::string& drinkType,
-                                     const std::string& paymentType);
+    std::shared_ptr<Order> createOrder(const std::string& drinkType,
+                                       const std::string& paymentType);
 
-  std::shared_ptr<Order> getOrder(int id);
+    std::shared_ptr<Order> getOrder(int id);
 
-  std::pair<bool, std::string> payOrder(int id);
+    std::pair<bool, std::string> payOrder(int id);
 
- private:
-  CoffeeShop& shop_;
-  std::shared_ptr<LoggerObserver> logger_;
-  std::atomic<int> nextId_{1};
-  std::unordered_map<int, std::shared_ptr<Order>> orders_;
-  std::mutex mtx_;
+private:
+    CoffeeShop& shop_;
+    std::shared_ptr<LoggerObserver> logger_;
+    std::atomic<int> nextId_{1};
+    std::unordered_map<int, std::shared_ptr<Order>> orders_;
+    std::mutex mtx_;
 };

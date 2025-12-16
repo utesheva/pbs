@@ -6,22 +6,22 @@
 #include <thread>
 
 class NotificationDispatcher {
- public:
-  static NotificationDispatcher& instance();
+public:
+    static NotificationDispatcher& instance();
 
-  void post(std::function<void()> task);
+    void post(std::function<void()> task);
 
-  void stop();
+    void stop();
 
- private:
-  NotificationDispatcher();
-  ~NotificationDispatcher();
+private:
+    NotificationDispatcher();
+    ~NotificationDispatcher();
 
-  void run();
+    void run();
 
-  std::thread worker_;
-  std::mutex mtx_;
-  std::condition_variable cv_;
-  std::queue<std::function<void()>> tasks_;
-  bool running_ = true;
+    std::thread worker_;
+    std::mutex mtx_;
+    std::condition_variable cv_;
+    std::queue<std::function<void()>> tasks_;
+    bool running_ = true;
 };

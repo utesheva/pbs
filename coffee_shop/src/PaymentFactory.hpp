@@ -4,7 +4,7 @@
 #include "PaymentStrategy.hpp"
 
 class PaymentFactory {
- public:
-  static std::unique_ptr<PaymentStrategy> create(
-      const std::string& paymentType);
+public:
+    static std::unique_ptr<PaymentStrategy> create(
+        const std::string& paymentType);
 };

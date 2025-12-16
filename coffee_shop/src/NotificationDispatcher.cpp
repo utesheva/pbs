@@ -2,48 +2,58 @@
 #include <utility>
 
 NotificationDispatcher& NotificationDispatcher::instance() {
-  static NotificationDispatcher inst;
-  return inst;
+    static NotificationDispatcher inst;
+    return inst;
 }
 
 NotificationDispatcher::NotificationDispatcher() {
-  worker_ = std::thread([this]() { run(); });
+    worker_ = std::thread([this]() { run(); });
 }
 
-NotificationDispatcher::~NotificationDispatcher() { stop(); }
+NotificationDispatcher::~NotificationDispatcher() {
+    stop();
+}
 
 void NotificationDispatcher::stop() {
-  {
-    std::lock_guard<std::mutex> lk(mtx_);
-    if (!running_) return;
-    running_ = false;
-  }
-  cv_.notify_all();
-  if (worker_.joinable()) worker_.join();
+    {
+        std::lock_guard<std::mutex> lk(mtx_);
+        if (!running_) {
+            return;
+        }
+        running_ = false;
+    }
+    cv_.notify_all();
+    if (worker_.joinable()) {
+        worker_.join();
+    }
 }
 
 void NotificationDispatcher::post(std::function<void()> task) {
-  {
-    std::lock_guard<std::mutex> lk(mtx_);
-    tasks_.push(std::move(task));
-  }
-  cv_.notify_one();
+    {
+        std::lock_guard<std::mutex> lk(mtx_);
+        tasks_.push(std::move(task));
+    }
+    cv_.notify_one();
 }
 
 void NotificationDispatcher::run() {
-  while (true) {
-    std::function<void()> task;
-    {
-      std::unique_lock<std::mutex> lk(mtx_);
-      cv_.wait(lk, [this]() { return !tasks_.empty() || !running_; });
-      if (!running_ && tasks_.empty()) return;
-      task = std::move(tasks_.front());
-      tasks_.pop();
+    while (true) {
+        std::function<void()> task;
+        {
+            std::unique_lock<std::mutex> lk(mtx_);
+            cv_.wait(lk, [this]() { return !tasks_.empty() || !running_; });
+            if (!running_ && tasks_.empty()) {
+                return;
+            }
+            task = std::move(tasks_.front());
+            tasks_.pop();
+        }
+        try {
+            if (task) {
+                task();
+            }
+        } catch (...) {
+            // swallow exceptions: observers shouldn't bring server down
+        }
     }
-    try {
-      if (task) task();
-    } catch (...) {
-      // swallow exceptions: observers shouldn't bring server down
-    }
-  }
 }

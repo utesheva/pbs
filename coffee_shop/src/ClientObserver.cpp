@@ -6,7 +6,9 @@
 
 class LoggerObserver;
 
-ClientObserver::ClientObserver(int orderId) : orderId_(orderId) {}
+ClientObserver::ClientObserver(int orderId)
+    : orderId_(orderId) {
+}
 
 void ClientObserver::update(const Order& order) {
     std::lock_guard<std::mutex> lk(mtx_);
@@ -21,7 +23,7 @@ bool ClientObserver::waitForStatusChange(int timeout_ms = 100) {
         return true;
     } else {
         return cv_.wait_for(lk, std::chrono::milliseconds(timeout_ms)) !=
-            std::cv_status::timeout;
+               std::cv_status::timeout;
     }
 }
 
